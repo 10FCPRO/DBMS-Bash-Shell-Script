@@ -1,5 +1,60 @@
+
+function mainMenu {
+  echo -e "\n+---------Main Menu-------------+"
+  echo "| 1. Select DB                  |"
+  echo "| 2. Create DB                  |"
+  echo "| 3. Rename DB                  |"
+  echo "| 4. Drop DB                    |"
+  echo "| 5. Show DBs                   |"
+  echo "| 6. Exit                       |"
+  echo "+-------------------------------+"
+  echo -e "Enter Choice: \c"
+  read ch
+  case $ch in
+    1)  selectDB ;;
+    2)  createDB ;;
+    3)  renameDB ;;
+    4)  dropDB ;;
+    5)  ls ./DBMS ; mainMenu;;
+    6) exit ;;
+    *) echo " Wrong Choice " ; mainMenu;
+  esac
+}
+
+
+//Selecting Database 
+function selectDB { // Enter the Database name the needs to be selected 
+  echo -e "Enter Database Name: \c"
+  read dbName
+  cd ./DBMS/$dbName 2>>./.error.log
+  if [[ $? == 0 ]]; then
+    echo "Database $dbName was Successfully Selected"
+    tablesMenu
+  else
+    echo "Database $dbName wasn't found"
+    mainMenu
+  fi
+}
+
+//Creating Database
+function createDB {
+  echo -e "Enter Database Name: \c"
+  read dbName
+  mkdir ./DBMS/$dbName  // The mkdir command creates a new directory with the name specified by the user, under the ./DBMS directory. 
+  if [[ $? == 0 ]]
+  then
+    echo "Database Created Successfully"
+  else
+    echo "Error Creating Database $dbName"
+  fi
+  mainMenu
+}
+
+
+
+
 // This is a shell Function that renames the Database 
-function DatabseRename { 
+function DatabaseRename { 
   echo -e "Please Enter the Current Database Name: \c" // The function prompts the user to enter the current database name
   read dbName  // It reads the input using the read Command
   echo -e "Please Enter the New Database Name: \c" //The function prompts the user to enter the new database name  
