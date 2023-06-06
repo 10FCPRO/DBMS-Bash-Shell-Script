@@ -1,21 +1,29 @@
-
-function renameDB {
-  echo -e "Enter Current Database Name: \c"
-  read dbName
-  echo -e "Enter New Database Name: \c"
-  read newName
+// This is a shell Function that renames the Database 
+function DatabseRename { 
+  echo -e "Please Enter the Current Database Name: \c" // The function prompts the user to enter the current database name
+  read dbName  // It reads the input using the read Command
+  echo -e "Please Enter the New Database Name: \c" //The function prompts the user to enter the new database name  
+  read newName // Reading 
+  
+  // The mv command is used to rename the directory that represents the current database.
+  // The 2>> operator redirects any error messages to the .error.log file.
   mv ./DBMS/$dbName ./DBMS/$newName 2>>./.error.log
+  //The function checks the exit status of the mv command using $?. If the exit status is 0,
+  //the function prints "Database Renamed Successfully". Otherwise, it prints "Error Renaming Database".
   if [[ $? == 0 ]]; then
     echo "Database Renamed Successfully"
   else
-    echo "Error Renaming Database"
+    echo "Error occured in Renaming the Database"
   fi
   mainMenu
 }
+
 function dropDB {
   echo -e "Enter Database Name: \c"
   read dbName
-  rm -r ./DBMS/$dbName 2>>./.error.log
+  rm -r ./DBMS/$dbName 2>>./.error.log.  //The rm command is used to remove the directory that represents the database.
+  // The -r option is used to remove the directory and its contents recursively.
+
   if [[ $? == 0 ]]; then
     echo "Database Dropped Successfully"
   else
@@ -24,9 +32,10 @@ function dropDB {
   mainMenu
 }
 
+//It calls the tablesMenu function. The menu has nine options, numbered from 1 to 9.
 function tablesMenu {
   echo -e "\n+--------Tables Menu------------+"
-  echo "| 1. Show Existing Tables       |"
+  echo "| 1. Show Existing Tables       |" //displays a list of existing tables in the current directory
   echo "| 2. Create New Table           |"
   echo "| 3. Insert Into Table          |"
   echo "| 4. Select From Table          |"
