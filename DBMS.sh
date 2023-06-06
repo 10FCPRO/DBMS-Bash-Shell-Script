@@ -252,7 +252,78 @@ function insert {
   row=""
   tablesMenu
 }
-
+function updateTable {
+  echo -e "Enter Table Name: \c"
+  read tableName
+  echo -e "Enter Condition Column name: \c"
+  read field
+  fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tableName)
+  if [[ $fid == "" ]]
+  then
+    echo "Not Found"
+    tablesMenu
+  else
+    echo -e "Enter Condition Value: \c"
+    read value
+    res=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$value'") print $'$fid'}' $tableName 2>>./.error.log)
+    if [[ $res == "" ]]
+    then
+      echo "Value Not Found"
+      tablesMenu
+    else
+      echo -e "Enter field name to set: \c"
+      read setField
+      setFid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$setField'") print i}}}' $tableName)
+      if [[ $setFid == "" ]]
+      then
+        echo "Not Found"
+        tablesMenu
+      else
+        echo -e "Enter new value to set: \c"
+        read newValue
+        NR=$(awk 'BEGIN{FS="|"}{if ($'$fid' == "'$value'") print NR}' $tableName 2>>./.error.log)
+        oldValue=$(awk 'BEGIN{FS="|"}{if(NR=='$NR'){for(i=1;i<=NF;i++){if(i=='$setFid') print $i}}}' $tableName 2>>./.error.log)
+        echo $oldValue
+        sed -i ''$NR's/'$oldValue'/'$newValue'/g' $tableName 2>>./.error.log
+        echo "Row Updated Successfully"
+        tablesMenu
+      fi
+    fi
+  fi
+}
+function selectMenu {
+  echo -e "\n\n+---------------Select Menu--------------------+"
+  echo "| 1. Select All Columns of a Table              |"
+  echo "| 2. Select Specific Column from a Table        |"
+  echo "| 3. Select From Table under condition          |"
+  echo "| 4. Aggregate Function for a Specific Column   |"
+  echo "| 5. Back To Tables Menu                        |"
+  echo "| 6. Back To Main Menu                          |"
+  echo "| 7. Exit                                       |"
+  echo "+----------------------------------------------+"
+  echo -e "Enter Choice: \c"
+  read ch
+  case $ch in
+    1) selectAll ;;
+    2) selectCol ;;
+    3) clear; selectCon ;;
+    4) ;;
+    5) clear; tablesMenu ;;
+    6) clear; cd ../.. 2>>./.error.log; mainMenu ;;
+    7) exit ;;
+    *) echo " Wrong Choice " ; selectMenu;
+  esac
+}
+function selectAll {
+  echo -e "Enter Table Name: \c"
+  read tableName
+  column -t -s '|' $tableName 2>>./.error.log
+  if [[ $? != 0 ]]
+  then
+    echo "Error Displaying Table $tableName"
+  fi
+  selectMenu
+}
 function deleteFromTable {
   echo -e "Enter Table Name: \c"
   read tName
