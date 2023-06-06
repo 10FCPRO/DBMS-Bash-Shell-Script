@@ -204,6 +204,7 @@ function insert {
   if ! [[ -f $tableName ]]; then
     echo "Table $tableName isn't existed ,choose another Table"
     tablesMenu
+  fi
   colsNum=`awk 'END{print NR}' .$tableName`
   sep="|"
   rowSep="\n"
