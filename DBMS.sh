@@ -38,41 +38,42 @@ function selectDB { // Enter the Database name the needs to be selected
 
 //Creating Database
 function createDB {
-  echo -e "Enter Database Name: \c"
+  echo -e "Enter the Database Name: \c"
   read dbName
   mkdir ./DBMS/$dbName  // The mkdir command creates a new directory with the name specified by the user, under the ./DBMS directory. 
   if [[ $? == 0 ]]
   then
-    echo "Database Created Successfully"
+    echo "Database is Created"
   else
-    echo "Error Creating Database $dbName"
+    echo "Error Creating the Database $dbName"
   fi
   mainMenu
 }
 
 
 
-
+//Function 4
 // This is a shell Function that renames the Database 
 function DatabaseRename { 
-  echo -e "Please Enter the Current Database Name: \c" // The function prompts the user to enter the current database name
+  echo -e "Enter the Current Database Name: \c" // The function prompts the user to enter the current database name
   read dbName  // It reads the input using the read Command
-  echo -e "Please Enter the New Database Name: \c" //The function prompts the user to enter the new database name  
+  echo -e "Enter the New Database Name: \c" //The function prompts the user to enter the new database name  
   read newName // Reading 
   
   // The mv command is used to rename the directory that represents the current database.
   // The 2>> operator redirects any error messages to the .error.log file.
   mv ./DBMS/$dbName ./DBMS/$newName 2>>./.error.log
   //The function checks the exit status of the mv command using $?. If the exit status is 0,
-  //the function prints "Database Renamed Successfully". Otherwise, it prints "Error Renaming Database".
+  //the function prints "Database Renamed Successfully". Otherwise, it prints "Error".
   if [[ $? == 0 ]]; then
-    echo "Database Renamed Successfully"
+    echo "Database is successfully renamed"
   else
-    echo "Error occured in Renaming the Database"
+    echo "ERROR"
   fi
   mainMenu
 }
 
+//Function 5
 function dropDB {
   echo -e "Enter Database Name: \c"
   read dbName
@@ -87,6 +88,7 @@ function dropDB {
   mainMenu
 }
 
+//Function 6
 //It calls the tablesMenu function. The menu has nine options, numbered from 1 to 9.
 function tablesMenu {
   echo -e "\n+--------Tables Menu------------+"
