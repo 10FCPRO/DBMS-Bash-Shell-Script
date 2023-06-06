@@ -1,3 +1,4 @@
+
 function renameDB {
   echo -e "Enter Current Database Name: \c"
   read dbName
