@@ -23,7 +23,7 @@ function mainMenu {
 
 
 #Selecting Database 
-function selectDB { // Enter the Database name the needs to be selected 
+function selectDB { # Enter the Database name the needs to be selected 
   echo -e "Enter Database Name: \c"
   read dbName
   cd ./DBMS/$dbName 2>>./.error.log
@@ -40,7 +40,7 @@ function selectDB { // Enter the Database name the needs to be selected
 function createDB {
   echo -e "Enter the Database Name: \c"
   read dbName
-  mkdir ./DBMS/$dbName  // The mkdir command creates a new directory with the name specified by the user, under the ./DBMS directory. 
+  mkdir ./DBMS/$dbName  # The mkdir command creates a new directory with the name specified by the user, under the ./DBMS directory. 
   if [[ $? == 0 ]]
   then
     echo "Database is Created"
@@ -55,10 +55,10 @@ function createDB {
 #Function 4
 # This is a shell Function that renames the Database 
 function DatabaseRename { 
-  echo -e "Enter the Current Database Name: \c" // The function prompts the user to enter the current database name
-  read dbName  // It reads the input using the read Command
-  echo -e "Enter the New Database Name: \c" //The function prompts the user to enter the new database name  
-  read newName // Reading 
+  echo -e "Enter the Current Database Name: \c" # The function prompts the user to enter the current database name
+  read dbName  # It reads the input using the read Command
+  echo -e "Enter the New Database Name: \c" #The function prompts the user to enter the new database name  
+  read newName # Reading 
   
   # The mv command is used to rename the directory that represents the current database.
   # The 2>> operator redirects any error messages to the .error.log file.
@@ -77,7 +77,7 @@ function DatabaseRename {
 function dropDB {
   echo -e "Enter Database Name: \c"
   read dbName
-  rm -r ./DBMS/$dbName 2>>./.error.log.  //The rm command is used to remove the directory that represents the database.
+  rm -r ./DBMS/$dbName 2>>./.error.log.  #The rm command is used to remove the directory that represents the database.
   # The -r option is used to remove the directory and its contents recursively.
 
   if [[ $? == 0 ]]; then
@@ -92,7 +92,7 @@ function dropDB {
 #It calls the tablesMenu function. The menu has nine options, numbered from 1 to 9.
 function tablesMenu {
   echo -e "\n+--------Tables Menu------------+"
-  echo "| 1. Show Existing Tables       |" //displays a list of existing tables in the current directory
+  echo "| 1. Show Existing Tables       |" #displays a list of existing tables in the current directory
   echo "| 2. Create New Table           |"
   echo "| 3. Insert Into Table          |"
   echo "| 4. Select From Table          |"
