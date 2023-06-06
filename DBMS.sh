@@ -289,6 +289,7 @@ function selectCol {
 
 
 function selectCon {
+// print a menu with options for the user to select from
   echo -e "\n\n+--------Select Under Condition Menu-----------+"
   echo "| 1. Select All Columns Matching Condition    |"
   echo "| 2. Select Specific Column Matching Condition|"
@@ -297,7 +298,9 @@ function selectCon {
   echo "| 5. Exit                                     |"
   echo "+---------------------------------------------+"
   echo -e "Enter Choice: \c"
+//read input from user and store to ch
   read ch
+//switch depending on user input it calls function and clears
   case $ch in
     1) clear; allCond ;;
     2) clear; specCond ;;
