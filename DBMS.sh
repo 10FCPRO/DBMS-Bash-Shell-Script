@@ -12,7 +12,6 @@ function renameDB {
   fi
   mainMenu
 }
-
 function dropDB {
   echo -e "Enter Database Name: \c"
   read dbName
