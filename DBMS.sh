@@ -296,7 +296,7 @@ function selectCon {
   echo "| 3. Back To Selection Menu                   |"
   echo "| 4. Back To Main Menu                        |"
   echo "| 5. Exit                                     |"
-  echo "+---------------------------------------------+"
+  echo "-----------------------------------------------"
   echo -e "Enter Choice: \c"
 //read input from user and store to ch
   read ch
@@ -312,12 +312,14 @@ function selectCon {
 }
 
 function allCond {
-  echo -e "Select all columns from TABLE Where FIELD(OPERATOR)VALUE \n"
+  echo -e "Select all columns from TABLE Where Condition \n"
   echo -e "Enter Table Name: \c"
   read tName
   echo -e "Enter required FIELD name: \c"
   read field
+  //search for fid  in the first row of the table and searches for the field If found, it prints its column number that will be stored in the variable fid
   fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tName)
+  //if there isnt a field that exists by that name print not found and call selectcon function else print operators and read user input
   if [[ $fid == "" ]]
   then
     echo "Not Found"
@@ -329,12 +331,14 @@ function allCond {
     then
       echo -e "\nEnter required VALUE: \c"
       read val
+    //search for rows in table where value in $fid matches the inputs $op and $val, column formats the output into a table with a | separator. The output stored in res.
       res=$(awk 'BEGIN{FS="|"}{if ($'$fid$op$val') print $0}' $tName 2>>./.error.log |  column -t -s '|')
       if [[ $res == "" ]]
       then
         echo "Value Not Found"
         selectCon
       else
+    //If rows were found print rows in a table 
         awk 'BEGIN{FS="|"}{if ($'$fid$op$val') print $0}' $tName 2>>./.error.log |  column -t -s '|'
         selectCon
       fi
