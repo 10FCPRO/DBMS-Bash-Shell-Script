@@ -1,20 +1,39 @@
+
+// This is a shel Function that renames the Database 
 function renameDB {
-  echo -e "Enter Current Database Name: \c"
+// The function prompts the user to enter the current database name 
+  echo -e "Please Enter Your The name of the current Database: \c"
+  // It reads the input using the read Command
   read dbName
-  echo -e "Enter New Database Name: \c"
+  
+  //The function prompts the user to enter the new database name  
+  echo -e "Pleas Enter the name of the New Database Name: \c"
+  //reads the input using the read command.
   read newName
+  
+  // The mv command is used to rename the directory that represents the current database.
+  // The 2>> operator redirects any error messages to the .error.log file.
+  
   mv ./DBMS/$dbName ./DBMS/$newName 2>>./.error.log
+  //The function checks the exit status of the mv command using $?. If the exit status is 0,
+  //the function prints "Database Renamed Successfully". Otherwise, it prints "Error Renaming Database".
   if [[ $? == 0 ]]; then
     echo "Database Renamed Successfully"
   else
     echo "Error Renaming Database"
+    //fi is a keyword in shell scripting that is used to mark the end of an if statement. 
+    //It is used to indicate the end of the block of code that should be executed if the condition in the if statement is true.
   fi
+  //The function calls mainMenu, which is presumably a function that displays the main menu of the custom database management system.
   mainMenu
 }
 
+// The function prompts the user to enter the name of the database to be dropped and reads the input using the read command.
 function dropDB {
   echo -e "Enter Database Name: \c"
   read dbName
+  //The rm command is used to remove the directory that represents the database. The -r option is used to remove the directory and its contents recursively.
+  //The 2>> operator redirects any error messages to the .error.log file.
   rm -r ./DBMS/$dbName 2>>./.error.log
   if [[ $? == 0 ]]; then
     echo "Database Dropped Successfully"
@@ -24,9 +43,10 @@ function dropDB {
   mainMenu
 }
 
+//It calls the tablesMenu function. The menu has nine options, numbered from 1 to 9.
 function tablesMenu {
   echo -e "\n+--------Tables Menu------------+"
-  echo "| 1. Show Existing Tables       |"
+  echo "| 1. Show Existing Tables       |" //displays a list of existing tables in the current directory
   echo "| 2. Create New Table           |"
   echo "| 3. Insert Into Table          |"
   echo "| 4. Select From Table          |"
