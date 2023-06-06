@@ -22,7 +22,7 @@ function mainMenu {
 }
 
 
-//Selecting Database 
+#Selecting Database 
 function selectDB { // Enter the Database name the needs to be selected 
   echo -e "Enter Database Name: \c"
   read dbName
@@ -36,7 +36,7 @@ function selectDB { // Enter the Database name the needs to be selected
   fi
 }
 
-//Creating Database
+#Creating Database
 function createDB {
   echo -e "Enter the Database Name: \c"
   read dbName
@@ -52,19 +52,19 @@ function createDB {
 
 
 
-//Function 4
-// This is a shell Function that renames the Database 
+#Function 4
+# This is a shell Function that renames the Database 
 function DatabaseRename { 
   echo -e "Enter the Current Database Name: \c" // The function prompts the user to enter the current database name
   read dbName  // It reads the input using the read Command
   echo -e "Enter the New Database Name: \c" //The function prompts the user to enter the new database name  
   read newName // Reading 
   
-  // The mv command is used to rename the directory that represents the current database.
-  // The 2>> operator redirects any error messages to the .error.log file.
+  # The mv command is used to rename the directory that represents the current database.
+  # The 2>> operator redirects any error messages to the .error.log file.
   mv ./DBMS/$dbName ./DBMS/$newName 2>>./.error.log
-  //The function checks the exit status of the mv command using $?. If the exit status is 0,
-  //the function prints "Database Renamed Successfully". Otherwise, it prints "Error".
+  #The function checks the exit status of the mv command using $?. If the exit status is 0,
+  #the function prints "Database Renamed Successfully". Otherwise, it prints "Error".
   if [[ $? == 0 ]]; then
     echo "Database is successfully renamed"
   else
@@ -73,12 +73,12 @@ function DatabaseRename {
   mainMenu
 }
 
-//Function 5
+#Function 5
 function dropDB {
   echo -e "Enter Database Name: \c"
   read dbName
   rm -r ./DBMS/$dbName 2>>./.error.log.  //The rm command is used to remove the directory that represents the database.
-  // The -r option is used to remove the directory and its contents recursively.
+  # The -r option is used to remove the directory and its contents recursively.
 
   if [[ $? == 0 ]]; then
     echo "Database Dropped Successfully"
@@ -88,8 +88,8 @@ function dropDB {
   mainMenu
 }
 
-//Function 6
-//It calls the tablesMenu function. The menu has nine options, numbered from 1 to 9.
+#Function 6
+#It calls the tablesMenu function. The menu has nine options, numbered from 1 to 9.
 function tablesMenu {
   echo -e "\n+--------Tables Menu------------+"
   echo "| 1. Show Existing Tables       |" //displays a list of existing tables in the current directory
@@ -362,7 +362,7 @@ function selectCol {
 
 
 function selectCon {
-// print a menu with options for the user to select from
+# print a menu with options for the user to select from
   echo -e "\n\n+--------Select Under Condition Menu-----------+"
   echo "| 1. Select All Columns Matching Condition    |"
   echo "| 2. Select Specific Column Matching Condition|"
@@ -371,9 +371,9 @@ function selectCon {
   echo "| 5. Exit                                     |"
   echo "-----------------------------------------------"
   echo -e "Enter Choice: \c"
-//read input from user and store to ch
+#read input from user and store to ch
   read ch
-//switch depending on user input it calls function and clears
+#switch depending on user input it calls function and clears
   case $ch in
     1) clear; allCond ;;
     2) clear; specCond ;;
@@ -390,9 +390,9 @@ function allCond {
   read tName
   echo -e "Enter required FIELD name: \c"
   read field
-  //search for fid  in the first row of the table and searches for the field If found, it prints its column number that will be stored in the variable fid
+  #search for fid  in the first row of the table and searches for the field If found, it prints its column number that will be stored in the variable fid
   fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tName)
-  //if there isnt a field that exists by that name print not found and call selectcon function else print operators and read user input
+  #if there isnt a field that exists by that name print not found and call selectcon function else print operators and read user input
   if [[ $fid == "" ]]
   then
     echo "Not Found"
@@ -404,14 +404,14 @@ function allCond {
     then
       echo -e "\nEnter required VALUE: \c"
       read val
-    //search for rows in table where value in $fid matches the inputs $op and $val, column formats the output into a table with a | separator. The output stored in res.
+    #search for rows in table where value in $fid matches the inputs $op and $val, column formats the output into a table with a | separator. The output stored in res.
       res=$(awk 'BEGIN{FS="|"}{if ($'$fid$op$val') print $0}' $tName 2>>./.error.log |  column -t -s '|')
       if [[ $res == "" ]]
       then
         echo "Value Not Found"
         selectCon
       else
-    //If rows were found print rows in a table 
+    #If rows were found print rows in a table 
         awk 'BEGIN{FS="|"}{if ($'$fid$op$val') print $0}' $tName 2>>./.error.log |  column -t -s '|'
         selectCon
       fi
@@ -423,11 +423,12 @@ function allCond {
 }
 
 function specCond {
-  echo -e "Select specific column from TABLE Where FIELD(OPERATOR)VALUE \n"
+  echo -e "Select specific column from TABLE Where Condition \n"
   echo -e "Enter Table Name: \c"
   read tName
   echo -e "Enter required FIELD name: \c"
   read field
+  #search for fid of the depending on user in the first row of the table and searches for $field. If found, it prints column number that is stored in fid.
   fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tName)
   if [[ $fid == "" ]]
   then
@@ -440,12 +441,14 @@ function specCond {
     then
       echo -e "\nEnter required VALUE: \c"
       read val
+  #search for rows in table where the value $fid matches inputs $op and $val. It prints the specified column ($fid) of the matching rows that is then stored in res.
       res=$(awk 'BEGIN{FS="|"; ORS="\n"}{if ($'$fid$op$val') print $'$fid'}' $tName 2>>./.error.log |  column -t -s '|')
       if [[ $res == "" ]]
       then
         echo "Value Not Found"
         selectCon
       else
+  #If rows were found, it prints $fid of the matching rows in a table and then calls selectCon function.
         awk 'BEGIN{FS="|"; ORS="\n"}{if ($'$fid$op$val') print $'$fid'}' $tName 2>>./.error.log |  column -t -s '|'
         selectCon
       fi
