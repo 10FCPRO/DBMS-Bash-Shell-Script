@@ -38,41 +38,42 @@ function selectDB { // Enter the Database name the needs to be selected
 
 //Creating Database
 function createDB {
-  echo -e "Enter Database Name: \c"
+  echo -e "Enter the Database Name: \c"
   read dbName
   mkdir ./DBMS/$dbName  // The mkdir command creates a new directory with the name specified by the user, under the ./DBMS directory. 
   if [[ $? == 0 ]]
   then
-    echo "Database Created Successfully"
+    echo "Database is Created"
   else
-    echo "Error Creating Database $dbName"
+    echo "Error Creating the Database $dbName"
   fi
   mainMenu
 }
 
 
 
-
+//Function 4
 // This is a shell Function that renames the Database 
 function DatabaseRename { 
-  echo -e "Please Enter the Current Database Name: \c" // The function prompts the user to enter the current database name
+  echo -e "Enter the Current Database Name: \c" // The function prompts the user to enter the current database name
   read dbName  // It reads the input using the read Command
-  echo -e "Please Enter the New Database Name: \c" //The function prompts the user to enter the new database name  
+  echo -e "Enter the New Database Name: \c" //The function prompts the user to enter the new database name  
   read newName // Reading 
   
   // The mv command is used to rename the directory that represents the current database.
   // The 2>> operator redirects any error messages to the .error.log file.
   mv ./DBMS/$dbName ./DBMS/$newName 2>>./.error.log
   //The function checks the exit status of the mv command using $?. If the exit status is 0,
-  //the function prints "Database Renamed Successfully". Otherwise, it prints "Error Renaming Database".
+  //the function prints "Database Renamed Successfully". Otherwise, it prints "Error".
   if [[ $? == 0 ]]; then
-    echo "Database Renamed Successfully"
+    echo "Database is successfully renamed"
   else
-    echo "Error occured in Renaming the Database"
+    echo "ERROR"
   fi
   mainMenu
 }
 
+//Function 5
 function dropDB {
   echo -e "Enter Database Name: \c"
   read dbName
@@ -87,6 +88,7 @@ function dropDB {
   mainMenu
 }
 
+//Function 6
 //It calls the tablesMenu function. The menu has nine options, numbered from 1 to 9.
 function tablesMenu {
   echo -e "\n+--------Tables Menu------------+"
@@ -250,7 +252,78 @@ function insert {
   row=""
   tablesMenu
 }
-
+function updateTable {
+  echo -e "Enter Table Name: \c"
+  read tableName
+  echo -e "Enter Condition Column name: \c"
+  read field
+  fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tableName)
+  if [[ $fid == "" ]]
+  then
+    echo "Not Found"
+    tablesMenu
+  else
+    echo -e "Enter Condition Value: \c"
+    read value
+    res=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$value'") print $'$fid'}' $tableName 2>>./.error.log)
+    if [[ $res == "" ]]
+    then
+      echo "Value Not Found"
+      tablesMenu
+    else
+      echo -e "Enter field name to set: \c"
+      read setField
+      setFid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$setField'") print i}}}' $tableName)
+      if [[ $setFid == "" ]]
+      then
+        echo "Not Found"
+        tablesMenu
+      else
+        echo -e "Enter new value to set: \c"
+        read newValue
+        NR=$(awk 'BEGIN{FS="|"}{if ($'$fid' == "'$value'") print NR}' $tableName 2>>./.error.log)
+        oldValue=$(awk 'BEGIN{FS="|"}{if(NR=='$NR'){for(i=1;i<=NF;i++){if(i=='$setFid') print $i}}}' $tableName 2>>./.error.log)
+        echo $oldValue
+        sed -i ''$NR's/'$oldValue'/'$newValue'/g' $tableName 2>>./.error.log
+        echo "Row Updated Successfully"
+        tablesMenu
+      fi
+    fi
+  fi
+}
+function selectMenu {
+  echo -e "\n\n+---------------Select Menu--------------------+"
+  echo "| 1. Select All Columns of a Table              |"
+  echo "| 2. Select Specific Column from a Table        |"
+  echo "| 3. Select From Table under condition          |"
+  echo "| 4. Aggregate Function for a Specific Column   |"
+  echo "| 5. Back To Tables Menu                        |"
+  echo "| 6. Back To Main Menu                          |"
+  echo "| 7. Exit                                       |"
+  echo "+----------------------------------------------+"
+  echo -e "Enter Choice: \c"
+  read ch
+  case $ch in
+    1) selectAll ;;
+    2) selectCol ;;
+    3) clear; selectCon ;;
+    4) ;;
+    5) clear; tablesMenu ;;
+    6) clear; cd ../.. 2>>./.error.log; mainMenu ;;
+    7) exit ;;
+    *) echo " Wrong Choice " ; selectMenu;
+  esac
+}
+function selectAll {
+  echo -e "Enter Table Name: \c"
+  read tableName
+  column -t -s '|' $tableName 2>>./.error.log
+  if [[ $? != 0 ]]
+  then
+    echo "Error Displaying Table $tableName"
+  fi
+  selectMenu
+}
 function deleteFromTable {
   echo -e "Enter Table Name: \c"
   read tName
