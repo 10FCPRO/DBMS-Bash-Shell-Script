@@ -199,23 +199,36 @@ function dropTable {
 }
 
 function insert {
+  #-e option enables the interpretation of backslash escape sequences
+  #/c so that we input on the same line
   echo -e "Table Name: \c"
   read tableName
+  #checks if table name is present
+  #-f is a file test operator
   if ! [[ -f $tableName ]]; then
     echo "Table $tableName isn't existed ,choose another Table"
     tablesMenu
   fi
+  #this gets the number of rows available in the metadata file of the table
+  #the metadata file stores fields name and information of the table
+  #we stored the last NR
   colsNum=`awk 'END{print NR}' .$tableName`
   sep="|"
   rowSep="\n"
+  #loops on every column we have in the table
+  #we skipped the 1st row cuz it contains the headers
   for (( i = 2; i <= $colsNum; i++ )); do
+    #this retrieves the first field found which is the column name 
     columnName=$(awk 'BEGIN{FS="|"}{ if(NR=='$i') print $1}' .$tableName)
+    #this retrieves the 2nd field found which is the column tyoe 
     columnType=$( awk 'BEGIN{FS="|"}{if(NR=='$i') print $2}' .$tableName)
+    #this retrieves the 3rd which is whether this column is a prim key or not
     colKey=$( awk 'BEGIN{FS="|"}{if(NR=='$i') print $3}' .$tableName)
     echo -e "$columnName ($columnType) = \c"
     read input
-
-    # Validate Input
+    
+    # if the column type is integer, we have to make the sure the input is all integer
+    #this is done by using regex
     if [[ $columnType == "int" ]]; then
       while ! [[ $input =~ ^[0-9]*$ ]]; do
         echo -e "invalid DataType !!"
@@ -223,9 +236,13 @@ function insert {
         read input
       done
     fi
-
+  
+    #if the column is a primary key, we have to make sure there is no prim key with the same value
     if [[ $colKey == "PK" ]]; then
       while [[ true ]]; do
+        #skips the first row which contains the table fields names
+        #outputs the field's values $(('$i' -1))
+        #the out record separator is a space
         if [[ $input =~ ^[`awk 'BEGIN{FS="|" ; ORS=" "}{if(NR != 1)print $(('$i'-1))}' $tableName`]$ ]]; then
           echo -e "invalid input for Primary Key !!"
         else
@@ -236,14 +253,19 @@ function insert {
       done
     fi
 
-    #Set row
+    #if i reached the final column
     if [[ $i == $colsNum ]]; then
+    #we set the row to be = the value of fields we took before
+    # plus the value of input we took now
+    # + the row separator as we finished input (we reached final column)
       row=$row$input$rowSep
     else
+    #if we didnt reach final column, we just put the normal field separator '|'
       row=$row$input$sep
     fi
   done
   echo -e $row"\c" >> $tableName
+  # this checks if the exit status of the previous command is 0 (success)
   if [[ $? == 0 ]]
   then
     echo "Data Inserted Successfully"
@@ -326,16 +348,21 @@ function selectAll {
   selectMenu
 }
 function deleteFromTable {
+  #-e option enables the interpretation of backslash escape sequences
+  #/c so that we input on the same line
   echo -e "Enter Table Name: \c"
   read tName
   echo -e "Enter Condition Column name: \c"
   read field
+  #checks if the field name is present
   fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tName)
+  #if the fid is emty, no result is found
   if [[ $fid == "" ]]
   then
     echo "Not Found"
     tablesMenu
   else
+  #enters the condition this field equals to delete
     echo -e "Enter Condition Value: \c"
     read val
     res=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$val'") print $'$fid'}' $tName 2>>./.error.log)
@@ -344,7 +371,9 @@ function deleteFromTable {
       echo "Value Not Found"
       tablesMenu
     else
+    #if the result is not empty, we find the row number where this result is found
       NR=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$val'") print NR}' $tName 2>>./.error.log)
+      #we then delete this row using sed and give it the row number with 'd' command
       sed -i ''$NR'd' $tName 2>>./.error.log
       echo "Row Deleted Successfully"
       tablesMenu
