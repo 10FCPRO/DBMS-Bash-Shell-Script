@@ -119,52 +119,56 @@ function tablesMenu {
 
 }
 
+#Function 7
+#Creating table in the database
 function createTable {
   echo -e "Table Name: \c"
-  read tableName
-  if [[ -f $tableName ]]; then
+  read tableName  #scan table name from the user
+  if [[ -f $tableName ]]; then  #checking if the the table name entered already exists
     echo "table already existed ,choose another name"
-    tablesMenu
+    tablesMenu  #calling tablesMenu funtion
   fi
   echo -e "Number of Columns: \c"
-  read colsNum
-  counter=1
-  sep="|"
-  rSep="\n"
-  pKey=""
-  metaData="Field"$sep"Type"$sep"key"
-  while [ $counter -le $colsNum ]
+  read colsNum 
+  counter=1  
+  sep="|"  # separating columns
+  rSep="\n"  # separating rows
+  pKey=""    # primary key
+  metaData="Field"$sep"Type"$sep"key"  # column name, data type, key type(primary, foreign key) are stored in metadata
+  while [ $counter -le $colsNum ]   #counter:tarcking column number
   do
     echo -e "Name of Column No.$counter: \c"
-    read colName
+    read colName  #scaning the name of the current column
 
     echo -e "Type of Column $colName: "
-    select var in "int" "str"
+    select var in "int" "str"  #the user has to choose the column type
     do
-      case $var in
-        int ) colType="int";break;;
+      case $var in                     #case statement is used to set the colType variable based on the user's selection.                  
+        int ) colType="int";break;;    
         str ) colType="str";break;;
-        * ) echo "Wrong Choice" ;;
+        * ) echo "Wrong Choice" ;;     #If the user enters an invalid choice, the script displays a message indicating that the choice was wrong.
       esac
     done
-    if [[ $pKey == "" ]]; then
-      echo -e "Make PrimaryKey ? "
+    
+    #prompts the user to set a primary key for the current table being created
+    if [[ $pKey == "" ]]; then       #checks if a primary key has already been set for the table by checking if $pKey is an empty string 
+      echo -e "Make PrimaryKey ? "    # If $pKey is empty, the script asks the user if they want to make the current column the primary key.
       select var in "yes" "no"
       do
         case $var in
-          yes ) pKey="PK";
+          yes ) pKey="PK";   #If the user selects "yes", the script sets the $pKey variable to "PK" and adds metadata for the current column with the primary key flag to the metaData variable.
           metaData+=$rSep$colName$sep$colType$sep$pKey;
           break;;
-          no )
+          no )  #If the user selects "no", the metadata for the current column is added without a primary key flag
           metaData+=$rSep$colName$sep$colType$sep""
           break;;
-          * ) echo "Wrong Choice" ;;
+          * ) echo "Wrong Choice" ;;  #if the user enters an invalid choice the script displays a message that the choice was wrong and prompts the user to select a valid option.
         esac
       done
     else
       metaData+=$rSep$colName$sep$colType$sep""
     fi
-    if [[ $counter == $colsNum ]]; then
+    if [[ $counter == $colsNum ]]; then  #checks if the current column is the last column
       temp=$temp$colName
     else
       temp=$temp$colName$sep
