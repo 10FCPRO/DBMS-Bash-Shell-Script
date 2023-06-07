@@ -170,7 +170,7 @@ function createTable {
     fi
     if [[ $counter == $colsNum ]]; then  #checks if the current column is the last column
       temp=$temp$colName
-    else
+    else       #the temp variable is updated to include the current column name and a separator character.
       temp=$temp$colName$sep
     fi
     ((counter++))
@@ -179,7 +179,7 @@ function createTable {
   echo -e $metaData  >> .$tableName
   touch $tableName
   echo -e $temp >> $tableName
-  if [[ $? == 0 ]]
+  if [[ $? == 0 ]]  #If the status is 0, the table was created successfully. If the status is not 0, an error occurred displays a message indicating the failure.
   then
     echo "Table Created Successfully"
     tablesMenu
@@ -189,6 +189,7 @@ function createTable {
   fi
 }
 
+#The function prompts the user to enter the name of the table to be dropped (deleted)
 function dropTable {
   echo -e "Enter Table Name: \c"
   read tName
